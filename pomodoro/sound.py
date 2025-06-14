@@ -4,6 +4,10 @@ Handles loading and playing sound files with volume control.
 """
 import os
 import logging
+
+# Suppress the default pygame support message
+os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
+
 import pygame
 
 logger = logging.getLogger(__name__)

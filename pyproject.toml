@@ -8,3 +8,6 @@ dependencies = [
     "PyQt6>=6.5.0",
     "pygame>=2.5.0",
 ]
+
+[project.scripts]
+pomodoro = "pomodoro.cli:main"
