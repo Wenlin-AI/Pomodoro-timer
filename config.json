@@ -17,7 +17,13 @@
     "enabled": false,
     "vault_name": "memory",
     "daily_notes_path": "Personal/Notes/Daily Notes",
-    "weekly_notes_path": "Personal/Notes/Weekly Notes"
+    "weekly_notes_path": "Personal/Notes/Weekly Notes",
+    "rest_api": {
+      "api_key": "",
+      "endpoint": "https://localhost",
+      "port": 27123,
+      "log_folder": "Focus Logs"
+    }
   },
   "ui": {
     "show_focus_text": true,

@@ -191,12 +191,15 @@ class PomodoroTimer(QWidget):
         if ok:
             self.focus_text = text
             self.update_focus_label()
+            self.session_manager.start_session(self.focus_text)
             self.time_left = self.pomodoro_time
             self.is_rest_period = False
             self.start_timer()
 
     def start_rest(self):
         """Start a rest session."""
+        if self.running and not self.is_rest_period:
+            self.session_manager.fail()
         self.focus_text = ""
         self.focus_label.setText("")
         self.time_left = self.rest_time
@@ -215,10 +218,14 @@ class PomodoroTimer(QWidget):
         if self.running:
             self.running = False
             self.timer.stop()
+            if not self.is_rest_period:
+                self.session_manager.pause()
             self.pause_button.setText("Continue")
         else:
             self.running = True
             self.timer.start(1000)
+            if not self.is_rest_period:
+                self.session_manager.resume()
             self.pause_button.setText("Pause")
 
     def update_timer(self):
@@ -236,7 +243,7 @@ class PomodoroTimer(QWidget):
                 if not self.is_rest_period:
                     # Focus period ended
                     self.sound_manager.play_focus_end()
-                    self.session_manager.log_session(self.focus_text)
+                    self.session_manager.complete()
                     self.start_rest_period()
                 else:
                     # Rest period ended
@@ -290,3 +297,9 @@ class PomodoroTimer(QWidget):
                 app = QApplication.instance()
                 if app:
                     app.quit()  # Exit with restart code
+
+    def closeEvent(self, event):
+        """Handle window close events."""
+        if self.running and not self.is_rest_period:
+            self.session_manager.fail()
+        event.accept()

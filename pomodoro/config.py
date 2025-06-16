@@ -28,7 +28,13 @@ DEFAULT_CONFIG = {
         "enabled": True,
         "vault_name": "memory",
         "daily_notes_path": "Personal/Notes/Daily Notes",
-        "weekly_notes_path": "Personal/Notes/Weekly Notes"
+        "weekly_notes_path": "Personal/Notes/Weekly Notes",
+        "rest_api": {
+            "api_key": "",
+            "endpoint": "https://localhost",
+            "port": 27123,
+            "log_folder": "Focus Logs"
+        }
     },
     "ui": {
         "show_focus_text": True,
@@ -173,4 +179,21 @@ class Config:
             self.config["obsidian"]["daily_notes_path"] = daily_path
         if weekly_path:
             self.config["obsidian"]["weekly_notes_path"] = weekly_path
+        self.save()
+
+    def get_rest_api_settings(self):
+        """Get Obsidian REST API settings."""
+        return self.config["obsidian"].get("rest_api", {})
+
+    def update_rest_api_settings(self, api_key=None, endpoint=None, port=None, log_folder=None):
+        """Update REST API configuration."""
+        rest_api = self.config["obsidian"].setdefault("rest_api", {})
+        if api_key is not None:
+            rest_api["api_key"] = api_key
+        if endpoint is not None:
+            rest_api["endpoint"] = endpoint
+        if port is not None:
+            rest_api["port"] = port
+        if log_folder is not None:
+            rest_api["log_folder"] = log_folder
         self.save()

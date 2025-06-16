@@ -8,6 +8,7 @@ dependencies = [
     "PyQt6>=6.5.0",
     "pygame>=2.5.0",
     "appdirs>=1.4.4",
+    "requests>=2.0",
 ]
 
 [project.scripts]

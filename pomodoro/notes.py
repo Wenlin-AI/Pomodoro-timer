@@ -6,6 +6,7 @@ import webbrowser
 import datetime
 import logging
 import urllib.parse
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -73,4 +74,35 @@ class NotesManager:
             return True
         except Exception as e:
             logger.error(f"Error opening weekly note: {e}")
+            return False
+
+    def log_focus_session(self, start, end, focus_text, duration, status):
+        """Record a focus session to Obsidian via the REST API."""
+        if not self.enabled:
+            return False
+
+        api = self.obsidian_settings.get("rest_api", {})
+        endpoint = api.get("endpoint", "https://localhost")
+        port = api.get("port", 27123)
+        api_key = api.get("api_key", "")
+        folder = api.get("log_folder", "Focus Logs")
+
+        date_str = start.strftime("%Y-%m-%d")
+        filename = f"{date_str} - Focus sessions.md"
+        file_path = f"{folder}/{filename}" if folder else filename
+
+        base_url = f"{endpoint}:{port}/vault/{urllib.parse.quote(file_path)}"
+        headers = {"Authorization": api_key, "Content-Type": "text/markdown"}
+
+        try:
+            response = requests.get(base_url, headers=headers, verify=False)
+            if response.status_code == 404:
+                header = "| Start | End | Focus | Duration | Status |\n| --- | --- | --- | --- | --- |\n"
+                requests.put(base_url, data=header.encode("utf-8"), headers=headers, verify=False)
+
+            row = f"| {start.strftime('%H:%M:%S')} | {end.strftime('%H:%M:%S')} | {focus_text or '-'} | {int(duration)}s | {status} |\n"
+            requests.post(base_url, data=row.encode("utf-8"), headers=headers, verify=False)
+            return True
+        except Exception as e:
+            logger.error(f"Error logging session to Obsidian: {e}")
             return False
