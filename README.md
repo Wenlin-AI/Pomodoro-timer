@@ -12,7 +12,7 @@ This Pomodoro Timer helps you boost productivity using the Pomodoro Technique â€
 - **Focus Tracking**: Enter what you're focusing on for each session
 - **Session Logging**: Automatically logs completed sessions with timestamps
 - **Audio Alerts**: Different sounds and volume levels for focus and rest periods
-- **Obsidian Integration**: Optional quick access to Daily and Weekly notes in Obsidian
+- **Obsidian Integration**: Optional quick access to Daily and Weekly notes in Obsidian and logging via the Local REST API ([see docs](docs/obsidian.md))
 - **Window Management**:
   - Always-on-top functionality
   - Frameless window design
@@ -82,7 +82,7 @@ The application uses a `config.json` file to store user preferences:
 
 - **Timer**: Configure focus and rest period durations
 - **Sounds**: Set different sound files and volume levels for focus and rest periods
-- **Obsidian**: Enable/disable integration and set vault and note paths
+- **Obsidian**: Enable/disable integration, configure vault paths and REST API connection
 - **UI**: Set window position, size, and appearance options
 
 ## Usage

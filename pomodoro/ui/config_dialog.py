@@ -4,7 +4,8 @@ Configuration dialog for the Pomodoro Timer.
 import logging
 from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QTabWidget, QWidget, QFormLayout,
-    QSpinBox, QDoubleSpinBox, QCheckBox, QDialogButtonBox
+    QSpinBox, QDoubleSpinBox, QCheckBox, QDialogButtonBox,
+    QLineEdit
 )
 
 logger = logging.getLogger(__name__)
@@ -98,10 +99,29 @@ class PomodoroConfigDialog(QDialog):
         
         self.obsidian_enabled = QCheckBox()
         self.obsidian_enabled.setChecked(self.config.is_obsidian_enabled())
-        
+
         obsidian_settings = self.config.get_obsidian_settings()
-        
+        rest_api = obsidian_settings.get("rest_api", {})
+
+        self.api_key_edit = QLineEdit()
+        self.api_key_edit.setEchoMode(QLineEdit.EchoMode.Password)
+        self.api_key_edit.setText(rest_api.get("api_key", ""))
+
+        self.endpoint_edit = QLineEdit()
+        self.endpoint_edit.setText(rest_api.get("endpoint", "https://localhost"))
+
+        self.port_spinbox = QSpinBox()
+        self.port_spinbox.setRange(1, 65535)
+        self.port_spinbox.setValue(rest_api.get("port", 27123))
+
+        self.folder_edit = QLineEdit()
+        self.folder_edit.setText(rest_api.get("log_folder", "Focus Logs"))
+
         notes_layout.addRow("Enable Obsidian integration:", self.obsidian_enabled)
+        notes_layout.addRow("API key:", self.api_key_edit)
+        notes_layout.addRow("Endpoint:", self.endpoint_edit)
+        notes_layout.addRow("Port:", self.port_spinbox)
+        notes_layout.addRow("Log folder:", self.folder_edit)
         self.notes_tab.setLayout(notes_layout)
 
     def accept(self):
@@ -119,6 +139,12 @@ class PomodoroConfigDialog(QDialog):
         
         # Save obsidian settings
         self.config.set_obsidian_enabled(self.obsidian_enabled.isChecked())
+        self.config.update_rest_api_settings(
+            api_key=self.api_key_edit.text(),
+            endpoint=self.endpoint_edit.text(),
+            port=self.port_spinbox.value(),
+            log_folder=self.folder_edit.text(),
+        )
         
         # End batch mode and save all changes at once
         self.config.end_batch()

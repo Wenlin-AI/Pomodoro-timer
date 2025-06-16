@@ -76,7 +76,7 @@ def main(focus=None, rest=None):
 
         sound_manager = SoundManager(config)
         notes_manager = NotesManager(config)
-        session_manager = SessionManager(os.path.join(user_data_dir, "pomodoro_sessions.log"))
+        session_manager = SessionManager(config, notes_manager, os.path.join(user_data_dir, "pomodoro_sessions.log"))
 
         app = QApplication(sys.argv)
         app.setApplicationName("Pomodoro Timer")
